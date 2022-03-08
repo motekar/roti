@@ -36,7 +36,6 @@ class Roti
 
     public function run($route_path = 'routes/')
     {
-        // trailingslashit
         $route_path = self::trailingslashit($route_path);
 
         $current_route = empty($_GET) ? 'index' : array_keys($_GET)[0];
@@ -87,10 +86,12 @@ class Roti
         $route_files = glob($route_path . '{*,*/*,*/*/*,*/*/*/*}.php', GLOB_BRACE);
 
         $cache_path = $cache_path ?? $route_path;
+
+        // Use checksum to detect changes in route files
         $checksum = md5(json_encode($route_files));
         $cache_file = $cache_path . ".route-cache-{$checksum}.php";
 
-        // Use cached data
+        // Found cache file with matching checksum
         if (self::$_useCache && file_exists($cache_file)) {
             return include $cache_file;
         }
@@ -100,6 +101,7 @@ class Roti
         foreach ($route_files as $filename) {
             $route = preg_replace('/^routes\//', '', $filename);
 
+            // Ignore files which filename started with underscore
             if (
                 preg_match('/^_/', $route) ||
                 preg_match('/\/_/', $route)
@@ -107,8 +109,6 @@ class Roti
 
             $route = preg_replace('/\.php$/', '', $route);
             $route = preg_replace('#^' . preg_quote($route_path) . '#', '', $route);
-
-            // $route = preg_replace( '/\[(\w+)\]/' , '(?<$1>[^/]+)' , $route );
 
             $route = preg_replace_callback('/\[(\w+)\]/', function($matches) {
                 [$name, $rule] = self::parseRouteParam($matches[1]);
