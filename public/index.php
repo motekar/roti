@@ -8,4 +8,4 @@ ini_set('display_errors', 'On');
 
 Motekar\Roti::getInstance()
     ->setMode('development')
-    ->run('../test/routes');
+    ->run('../example/routes');
