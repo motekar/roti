@@ -2,10 +2,6 @@
 
 require '../vendor/autoload.php';
 
-// require '../src/Roti.php';
-
-ini_set('display_errors', 'On');
-
 Motekar\Roti::getInstance()
-    ->setMode('development')
+    ->useCache(false)
     ->run('../example/routes');

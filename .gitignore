@@ -1,2 +1,2 @@
 /vendor/
-/test/routes/.cache*
+*.route-cache*

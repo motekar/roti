@@ -5,7 +5,7 @@ namespace Motekar;
 class Roti
 {
     private static $_instance = null;
-    private static $_mode = 'production';
+    private static $_useCache = true;
 
     private function __construct() { }
 
@@ -27,9 +27,9 @@ class Roti
         return self::trailingslashit($base_url) . '?' . ltrim($path, '/') . $params_str;
     }
 
-    public function setMode($mode = 'production'): Roti
+    public function useCache($mode = true): Roti
     {
-        self::$_mode = $mode;
+        self::$_useCache = $mode;
 
         return $this;
     }
@@ -88,10 +88,10 @@ class Roti
 
         $cache_path = $cache_path ?? $route_path;
         $checksum = md5(json_encode($route_files));
-        $cache_file = $cache_path . ".cache-{$checksum}.php";
+        $cache_file = $cache_path . ".route-cache-{$checksum}.php";
 
         // Use cached data
-        if (self::$_mode == 'production' && file_exists($cache_file)) {
+        if (self::$_useCache && file_exists($cache_file)) {
             return include $cache_file;
         }
 
@@ -133,7 +133,7 @@ class Roti
         $routes = $index_routes + $other_routes;
 
         // Delete old caches
-        $cache_files = glob($cache_path . '.cache-*');
+        $cache_files = glob($cache_path . '.route-cache-*');
         foreach ($cache_files as $file) unlink($file);
 
         // Write cache file
