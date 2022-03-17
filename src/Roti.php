@@ -54,7 +54,7 @@ class Roti
         foreach ($routes as $route => $file) {
             if (preg_match(
                     "#$route#",
-                    $current_route . 'index',
+                    rtrim($current_route, '/\\') . '/index',
                     $matches
                 )) {
                 $route_file = $file;
